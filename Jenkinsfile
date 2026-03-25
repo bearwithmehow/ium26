@@ -1,10 +1,11 @@
 pipeline {
     agent any
 
-    properties([[$class: 'GogsProjectProperty', gogsBranchFilter: '',
-    gogsSecret: <object of type hudson.util.Secret>, gogsUsePayload: false],
-    parameters([string(defaultValue: '1000', name: 'CUTOFF')], [string(defaultValue: 'bearwithmehow', name: 'KAGGLE_USERNAME'), string(defaultValue: '', name: 'KAGGLE_KEY')]),
-    pipelineTriggers([[$class: 'GogsTrigger']])])
+    parameters{
+        string(defaultValue: '1000', name: 'CUTOFF'),
+        string(defaultValue: 'bearwithmehow', name: 'KAGGLE_USERNAME'),
+        string(defaultValue: '', name: 'KAGGLE_KEY'),
+    }
 
     stages {
         stage('checkout: Check out from version control') {
