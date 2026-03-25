@@ -2,9 +2,9 @@ pipeline {
     agent any
 
     parameters{
-        string(defaultValue: '1000', name: 'CUTOFF'),
-        string(defaultValue: 'bearwithmehow', name: 'KAGGLE_USERNAME'),
-        string(defaultValue: '', name: 'KAGGLE_KEY'),
+        string(defaultValue: '1000', name: 'CUTOFF')
+        string(defaultValue: 'bearwithmehow', name: 'KAGGLE_USERNAME')
+        password(defaultValue: '', name: 'KAGGLE_KEY')
     }
 
     stages {
