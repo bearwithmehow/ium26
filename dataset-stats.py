@@ -1,13 +1,13 @@
 import pandas as pd
 import os
 
-if not os.path.exists('./data/train.csv'):
+if not os.path.exists('./artifacts/train.csv'):
     print("ERR: No generated datasets found.")
     exit(1)
 
-train = pd.read_csv('./data/train.csv')
-dev = pd.read_csv('./data/dev.csv')
-test = pd.read_csv('./data/test.csv')
+train = pd.read_csv('./artifacts/train.csv')
+dev = pd.read_csv('./artifacts/dev.csv')
+test = pd.read_csv('./artifacts/test.csv')
 
 print("DATASET STATS")
 print("=========")
