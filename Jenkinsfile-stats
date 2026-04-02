@@ -1,7 +1,7 @@
 pipeline {
     agent {
         docker { 
-            image 'bearwithmehow/ium:v1.1' 
+            image 'bearwithmehow/ium:v1.2' 
         }
     }
 
