@@ -21,7 +21,8 @@ pipeline {
                 withEnv([
                     "KAGGLE_USERNAME=${params.KAGGLE_USERNAME}",
                     "KAGGLE_KEY=${params.KAGGLE_KEY}",
-                    "CUTOFF=${params.CUTOFF}"
+                    "CUTOFF=${params.CUTOFF}",
+                    "KAGGLE_CONFIG_DIR=/tmp"
                 ]) {
                     sh 'echo KAGGLE_USERNAME: $KAGGLE_USERNAME'
                     sh 'echo CUTOFF: $CUTOFF'
