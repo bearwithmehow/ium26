@@ -15,7 +15,7 @@ pipeline {
         stage('copy: Copy artifacts from Create Dataset') {
             steps {
                 sh 'mkdir -p artifacts'
-                sh 'cp -r ../create-dataset/artifacts/* ./artifacts/ || echo "ERR: Could not copy files"'
+                sh 'cp -r /srv/jenkins/workspace/2026L/IUM/s481896/create-dataset/artifacts/* ./artifacts/ || echo "ERR: Could not copy files"'
                 sh 'ls -la ./artifacts/'
             }
         }

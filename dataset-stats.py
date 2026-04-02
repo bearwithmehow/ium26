@@ -19,7 +19,6 @@ print(f"\n[Columns]  ({len(train.columns)} total)")
 print("  " + ", ".join(train.columns.tolist()))
 
 print("\nAverage rating ")
-# Ponieważ 'Average_rating' było jedną ze skalowanych kolumn, możemy sprawdzić jej statystyki
 if 'Average_rating' in train.columns:
     print(train['Average_rating'].describe())
 else:
