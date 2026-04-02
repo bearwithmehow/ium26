@@ -1,0 +1,34 @@
+pipeline {
+    agent {
+        docker { 
+            image 'bearwithmehow/ium:v1.0' 
+        }
+    }
+
+    parameters{
+        string(defaultValue: '1000', name: 'CUTOFF')
+        string(defaultValue: 'bearwithmehow', name: 'KAGGLE_USERNAME')
+        password(defaultValue: '', name: 'KAGGLE_KEY')
+    }
+
+    stages {
+        stage('checkout: Check out from version control') {
+            steps {
+                checkout scm
+            }
+        }
+
+        stage('Stats: Calculate dataset statistics') {
+            steps {
+                withEnv([
+                    "KAGGLE_USERNAME=${params.KAGGLE_USERNAME}",
+                    "KAGGLE_KEY=${params.KAGGLE_KEY}",
+                    "CUTOFF=${params.CUTOFF}"
+                ]) {
+                    sh 'python3 dataset-stats.py' 
+                }
+            }
+        }
+
+    }
+}
