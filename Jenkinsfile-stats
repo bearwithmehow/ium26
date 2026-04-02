@@ -1,14 +1,8 @@
 pipeline {
     agent {
         docker { 
-            image 'bearwithmehow/ium:v1.0' 
+            image 'bearwithmehow/ium:v1.1' 
         }
-    }
-
-    parameters{
-        string(defaultValue: '1000', name: 'CUTOFF')
-        string(defaultValue: 'bearwithmehow', name: 'KAGGLE_USERNAME')
-        password(defaultValue: '', name: 'KAGGLE_KEY')
     }
 
     stages {
@@ -18,15 +12,19 @@ pipeline {
             }
         }
 
-        stage('Stats: Calculate dataset statistics') {
+        stage('copy: Copy artifacts from Create Dataset') {
             steps {
-                withEnv([
-                    "KAGGLE_USERNAME=${params.KAGGLE_USERNAME}",
-                    "KAGGLE_KEY=${params.KAGGLE_KEY}",
-                    "CUTOFF=${params.CUTOFF}"
-                ]) {
-                    sh 'python3 dataset-stats.py' 
-                }
+                copyArtifacts(
+                    projectName: 'create-dataset',
+                    filter: 'artifacts/**/*',                   
+                    target: ''                             
+                )
+            }
+        }
+
+        stage('stats: Calculate dataset statistics') {
+            steps {
+                sh 'python3 dataset-stats.py' 
             }
         }
 
