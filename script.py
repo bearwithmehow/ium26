@@ -94,8 +94,8 @@ dev, test = train_test_split(temp, test_size=0.50, random_state=42)
 
 print(f"Splits generated -> Train: {len(train)}, Dev: {len(dev)}, Test: {len(test)}")
 
-train.to_csv('./data/train.csv', index=False)
-dev.to_csv('./data/dev.csv', index=False)
-test.to_csv('./data/test.csv', index=False)
+train.to_csv('./artifacts/train.csv', index=False)
+dev.to_csv('./artifacts/dev.csv', index=False)
+test.to_csv('./artifacts/test.csv', index=False)
 
 print("Artifacts saved to artifacts/")
