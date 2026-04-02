@@ -14,11 +14,9 @@ pipeline {
 
         stage('copy: Copy artifacts from Create Dataset') {
             steps {
-                copyArtifacts(
-                    projectName: 'create-dataset',
-                    filter: 'artifacts/**/*',                   
-                    target: ''                             
-                )
+                sh 'mkdir -p artifacts'
+                sh 'cp -r ../create-dataset/artifacts/* ./artifacts/ || echo "ERR: Could not copy files"'
+                sh 'ls -la ./artifacts/'
             }
         }
 
