@@ -1,0 +1,49 @@
+pipeline {
+    agent {
+        docker { 
+            image 'bearwithmehow/ium:v1.2'
+            args '-v /srv/jenkins/workspace/2026L/IUM/s481896/create-dataset/artifacts:/srv/jenkins/workspace/2026L/IUM/s481896/create-dataset/artifacts:ro'
+        }
+    }
+
+    parameters {
+        string(defaultValue: '30',    name: 'EPOCHS',     description: 'Number of training epochs')
+        string(defaultValue: '64',    name: 'BATCH_SIZE', description: 'Batch size')
+        string(defaultValue: '0.001', name: 'LR',         description: 'Learning rate')
+    }
+
+    stages {
+        stage('checkout: Check out from version control') {
+            steps {
+                checkout scm
+            }
+        }
+
+        stage('copy: Copy artifacts from Create Dataset') {
+            steps {
+                sh 'mkdir -p artifacts'
+                sh 'cp -r /srv/jenkins/workspace/2026L/IUM/s481896/create-dataset/artifacts/* ./artifacts/ || echo "ERR: Could not copy files"'
+                sh 'ls -la ./artifacts/'
+            }
+        }
+
+        stage('train: Train model') {
+            steps {
+                withEnv([
+                    "EPOCHS=${params.EPOCHS}",
+                    "BATCH_SIZE=${params.BATCH_SIZE}",
+                    "LR=${params.LR}"
+                ]) {
+                    sh 'echo "Hyperparams: epochs=$EPOCHS, batch=$BATCH_SIZE, lr=$LR"'
+                    sh 'python3 train_model.py'
+                }
+            }
+        }
+
+        stage('archiveArtifacts') {
+            steps {
+                archiveArtifacts artifacts: 'artifacts/model.pt, artifacts/features.txt', fingerprint: true
+            }
+        }
+    }
+}

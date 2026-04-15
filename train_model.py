@@ -6,9 +6,9 @@ from torch.utils.data import DataLoader, TensorDataset
 import os
 
 # config
-EPOCHS      = 30
-BATCH_SIZE  = 64
-LR          = 1e-3
+EPOCHS      = int(os.environ.get("EPOCHS", 30))
+BATCH_SIZE  = int(os.environ.get("BATCH_SIZE", 64))
+LR          = float(os.environ.get("LR", 1e-3))
 MODEL_PATH  = "./artifacts/model.pt"
 FEATURES_PATH = "./artifacts/features.txt"
 
