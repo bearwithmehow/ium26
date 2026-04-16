@@ -1,10 +1,12 @@
+import os
+os.environ["TORCHINDUCTOR_CACHE_DIR"] = "/tmp/torch_cache" # jenkins UID shenanigans...
 import pandas as pd
 import numpy as np
 import torch
 import torch.nn as nn
 from torch.utils.data import DataLoader, TensorDataset
-import os
 
+torch._dynamo.disable()
 # config
 EPOCHS      = int(os.environ.get("EPOCHS", 30))
 BATCH_SIZE  = int(os.environ.get("BATCH_SIZE", 64))
