@@ -1,0 +1,22 @@
+.venv/
+venv/
+
+.git/
+.gitignore
+
+.idea/
+
+__pycache__/
+*.pyc
+
+# Model artifacts & data (if you don't need them baked into the image)
+# model/
+# data/
+
+# Misc
+*.md
+uv.lock
+.python-version
+Dockerfile
+.dockerignore
+Jenkinsfile-*

@@ -11,4 +11,5 @@ WORKDIR /app
 
 COPY . /app
 
-RUN pip3 install pandas kaggle numpy scikit-learn torch
+RUN pip3 install pandas kaggle numpy scikit-learn \
+    && pip3 install torch --index-url https://download.pytorch.org/whl/cpu

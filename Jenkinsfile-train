@@ -1,7 +1,7 @@
 pipeline {
     agent {
         docker { 
-            image 'bearwithmehow/ium:v1.2'
+            image 'bearwithmehow/ium:v1.3'
             args '-v /srv/jenkins/workspace/2026L/IUM/s481896/create-dataset/artifacts:/srv/jenkins/workspace/2026L/IUM/s481896/create-dataset/artifacts:ro'
         }
     }
