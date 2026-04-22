@@ -10,8 +10,10 @@ dependencies = [
     "kaggle>=2.0.0",
     "kagglehub>=1.0.0",
     "matplotlib>=3.10.8",
+    "mlflow>=1.27.0",
     "numpy>=2.4.3",
     "pandas>=3.0.1",
+    "protobuf<4.0",
     "scikit-learn>=1.8.0",
-    "torch>=2.0.0"
+    "torch>=2.0.0",
 ]
