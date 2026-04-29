@@ -71,7 +71,7 @@ optimizer = torch.optim.Adam(model.parameters(), lr=LR)
 criterion = nn.MSELoss()
 
 # MLflow
-mlflow.set_tracking_uri("file:./mlruns")
+mlflow.set_tracking_uri("sqlite:///mlflow.db")
 mlflow.set_experiment("letterboxd-rating-mlp")
 
 with mlflow.start_run() as run:

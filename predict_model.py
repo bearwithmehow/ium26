@@ -31,7 +31,7 @@ X_test = test[feature_names].values.astype(np.float32)
 print(f"Test rows: {len(X_test)}  |  Features: {len(feature_names)}")
 
 # load model URI saved during training
-mlflow.set_tracking_uri("file:./mlruns")
+mlflow.set_tracking_uri("sqlite:///mlflow.db")
 
 if os.path.exists(MODEL_URI_PATH):
     with open(MODEL_URI_PATH) as f:
