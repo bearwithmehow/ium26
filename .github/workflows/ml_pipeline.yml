@@ -85,7 +85,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: ml-model-artifacts
-          path: artifacts
+          path: .
 
       - name: Verify artifacts
         run: |
