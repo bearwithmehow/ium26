@@ -1,0 +1,137 @@
+name: Model Training and Evaluation Pipeline
+
+on:
+  workflow_dispatch:
+    inputs:
+      epochs:
+        description: 'Epochs'
+        required: true
+        default: '30'
+        type: string
+      batch_size:
+        description: 'Batch size'
+        required: true
+        default: '64'
+        type: string
+      learning_rate:
+        description: 'Learning rate'
+        required: true
+        default: '0.001'
+        type: string
+
+jobs:
+  train:
+    name: Train model
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup uv
+        uses: astral-sh/setup-uv@v3
+        with:
+          enable-cache: true
+          cache-dependency-glob: "uv.lock"
+
+      - name: Install dependencies
+        run: uv sync
+
+      - name: Generate/Download datasets
+        env:
+          KAGGLE_USERNAME: ${{ secrets.KAGGLE_USERNAME }}
+          KAGGLE_KEY: ${{ secrets.KAGGLE_KEY }}
+        run: uv run python script.py
+
+      - name: Train model
+        env:
+          EPOCHS: ${{ github.event.inputs.epochs }}
+          BATCH_SIZE: ${{ github.event.inputs.batch_size }}
+          LR: ${{ github.event.inputs.learning_rate }}
+        run: |
+          uv run python train_model.py
+
+      - name: Archive model artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: ml-model-artifacts
+          path: |
+            artifacts/train.csv
+            artifacts/dev.csv
+            artifacts/test.csv
+            artifacts/model.pt
+            artifacts/model_uri.txt
+            artifacts/features.txt
+            mlflow.db
+          include-hidden-files: true
+
+  evaluate:
+    name: Evaluate model
+    runs-on: ubuntu-latest
+    needs: train
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup uv
+        uses: astral-sh/setup-uv@v3
+        with:
+          enable-cache: true
+          cache-dependency-glob: "uv.lock"
+
+      - name: Install dependencies
+        run: uv sync
+
+      - name: Download model artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: ml-model-artifacts
+          path: artifacts
+
+      - name: Verify artifacts
+        run: |
+          echo "Verifying downloaded artifacts..."
+          ls -lah artifacts/
+          [ -f artifacts/model.pt ] && echo "model.pt found" || echo "model.pt missing"
+          [ -f artifacts/test.csv ] && echo "test.csv found" || echo "test.csv missing"
+          [ -f artifacts/features.txt ] && echo "features.txt found" || echo "features.txt missing"
+
+      - name: Prediction
+        run: |
+          uv run python predict_model.py
+
+      - name: Evaluation
+        run: |
+          uv run python << 'EOF'
+          import pandas as pd, numpy as np, os
+
+          df = pd.read_csv('artifacts/predictions.csv')
+          y, p = df['Actual_rating'], df['Predicted_rating']
+
+          mae = np.mean(np.abs(y - p))
+          rmse = np.sqrt(np.mean((y - p) ** 2))
+          mape = np.mean(np.abs((y - p) / y)) * 100
+
+          summary = f"""### SUMMARY
+          - **MAE** (Mean Absolute Error): `{mae:.4f}`
+          - **RMSE** (Root Mean Squared Error): `{rmse:.4f}`
+          - **MAPE** (Mean Absolute Percentage Error): `{mape:.2f}%`
+          - Test set: `{len(df)}` samples.
+
+          <details>
+          <summary>View First 5 Predictions</summary>
+
+          {df.head(5).to_markdown(index=False)}
+
+          </details>
+          """
+
+          with open(os.environ['GITHUB_STEP_SUMMARY'], 'a') as f:
+              f.write(summary)
+          EOF
+
+      - name: Upload evaluation results
+        uses: actions/upload-artifact@v4
+        with:
+          name: evaluation-results
+          path: artifacts/predictions.csv
+          retention-days: 30
